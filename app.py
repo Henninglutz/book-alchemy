@@ -1,10 +1,8 @@
 from flask import Flask
 from datetime import datetime, date
-from flask_sqlalchemy import SQLAlchemy
-
-import os
 from flask import render_template, request
 from data_models import db, Author, Book
+import os
 
 app = Flask(__name__)
 
@@ -76,9 +74,12 @@ def add_book():
        return render_template("add_book.html", authors=authors)
 #POST request
     title = (request.form.get("title") or "").strip()
-    isbn = (request.form.get("isbn") or "").strip()
+#    isbn = (request.form.get("isbn") or "").strip()
     publication_year_raw = (request.form.get("publication_year") or "").strip()
-    author_id_raw = request.form.get("author_id")
+    author_id = request.form.get("author_id", type=int)
+    if author_id is None or not Author.query.get(author_id):
+        return render_template("add_book.html", authors=authors,
+                               error="Valid author selection is required.")
 
 #validation for title
     if not title:
@@ -98,7 +99,7 @@ def add_book():
 
     book = Book(
         title=title,
-        isbn=isbn or None,
+#        isbn=isbn or None,
         publication_year=year_val or None,
         author_id=author_id or None,
     )
