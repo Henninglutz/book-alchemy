@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  </head>
+  <body>
+
+  <!-- Top-Actions: Add Author / Add Book -->
+  <div class="container">
+    <div class="center" style="gap:10px; margin-bottom:12px;">
+      <form action="/add_author" method="get">
+        <input type="submit" value="Add Author">
+      </form>
+      <form action="/add_book" method="get">
+        <input type="submit" value="Add Book">
+      </form>
+    </div>
+
+    <!-- 🔎 Search -->
+    <form action="/" method="get">
+      <input type="text" name="q" placeholder="Search books..."
+             value="{{ request.args.get('q', '') }}">
+      <button type="submit">Search</button>
+    </form>
+
+    {% if request.args.get('q') and not books %}
+      <p>No books match your search.</p>
+    {% endif %}
+
+    {% for book in books %}
+      <div>
+        <h3>{{ book.title }}</h3>
+
+        <!-- Delete-Button (POST) -->
+        <form action="{{ url_for('delete_book', book_id=book.id) }}" method="post" style="display:inline">
+          <button type="submit">Delete book</button>
+        </form>
+      </div>
+    {% endfor %}
+  </div>
+
+  </body>
+</html>
